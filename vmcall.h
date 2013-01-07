@@ -20,25 +20,46 @@
 	avoid dealing with compiler's struct alignment
 */
 
-typedef struct _reg {
-	uint8_t eax[4];
-	uint8_t ebx[4];
-	uint8_t ecx[4];
-	uint8_t edx[4];
-	uint8_t ebp[4];
-	uint8_t edi[4];
-	uint8_t esi[4];
+#ifdef __x86_64__
+
+typedef union {
+	unsigned long long value;
+	struct {
+		unsigned int low;
+		unsigned int high;
+	} r32;
+} _reg;
+
+#else
+
+typedef union {
+	unsigned int value;
+	struct {
+		unsigned int low;
+	} r32;
+} _reg;
+
+#endif
+
+typedef struct _reg_t {
+	_reg eax;
+	_reg ebx;
+	_reg ecx;
+	_reg edx;
+	_reg ebp;
+	_reg edi;
+	_reg esi;
 } reg_t;
 
 /* member accessing macros */
 
-#define R_EAX(r)	*((uint32_t *)&((r).eax))
-#define R_EBX(r)	*((uint32_t *)&((r).ebx))
-#define R_ECX(r)	*((uint32_t *)&((r).ecx))
-#define R_EDX(r)	*((uint32_t *)&((r).edx))
-#define R_EBP(r)	*((uint32_t *)&((r).ebp))
-#define R_EDI(r)	*((uint32_t *)&((r).edi))
-#define R_ESI(r)	*((uint32_t *)&((r).esi))
+#define R_EAX(r)	r.eax.value
+#define R_EBX(r)	r.ebx.value
+#define R_ECX(r)	r.ecx.value
+#define R_EDX(r)	r.edx.value
+#define R_EBP(r)	r.ebp.value
+#define R_EDI(r)	r.edi.value
+#define R_ESI(r)	r.esi.value
 
 /*
 	accesses VMware backdoor I/O ports

@@ -14,7 +14,11 @@ LDFLAGS =
 # replace the following line if you prefer inline version
 # of vmcall functions (vmcall.c)
 # VMCALL_O = vmcall.o
+ifeq ($(shell uname -m),x86_64)
+VMCALL_O = vmcall.o
+else
 VMCALL_O = vmcall.gas.o
+endif
 
 CPPFLAGS = -DHAVE_STDINT_H -DHAVE_CLOCK_SETTIME -DHAVE_SIGLONGJMP -DHAVE_NANOSLEEP -DHAVE_ICONV_H
 

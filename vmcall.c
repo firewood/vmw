@@ -92,6 +92,44 @@ __declspec(naked) void vmcall_rpc_outs(reg_t *reg)
 
 /* inline assembly code for gcc */
 
+#ifdef __x86_64__
+
+#define asm_op(opcode, reg) 		\
+	__asm__ __volatile__ (			\
+		"pushq %%rbp;"				\
+		"pushq %%rdi;"				\
+		"pushq %%rsi;"				\
+		"pushq %%rdx;"				\
+		"pushq %%rcx;"				\
+		"pushq %%rbx;"				\
+		"pushq %%rax;"				\
+		"movq 0x30(%%rax), %%rsi;"	\
+		"movq 0x28(%%rax), %%rdi;"	\
+		"movq 0x20(%%rax), %%rbp;"	\
+		"movq 0x18(%%rax), %%rdx;"	\
+		"movq 0x10(%%rax), %%rcx;"	\
+		"movq 0x08(%%rax), %%rbx;"	\
+		"movq 0x00(%%rax), %%rax;"	\
+		opcode						\
+		"xchgq %%rax, 0x00(%%rsp);"	\
+		"movq %%rsi, 0x30(%%rax);"	\
+		"movq %%rdi, 0x28(%%rax);"	\
+		"movq %%rbp, 0x20(%%rax);"	\
+		"movq %%rdx, 0x18(%%rax);"	\
+		"movq %%rcx, 0x10(%%rax);"	\
+		"movq %%rbx, 0x08(%%rax);"	\
+		"popq 0x00(%%rax);"			\
+		"popq %%rbx;"				\
+		"popq %%rcx;"				\
+		"popq %%rdx;"				\
+		"popq %%rsi;"				\
+		"popq %%rdi;"				\
+		"popq %%rbp;"				\
+		::"a"(reg)					\
+	);
+
+#else
+
 #warning "use stand alone assembly source for gas (vmcall.gas.s) if possible."
 
 /*
@@ -123,6 +161,8 @@ __declspec(naked) void vmcall_rpc_outs(reg_t *reg)
 		"popal;"					\
 		::"a"(reg)					\
 	);
+
+#endif
 
 void vmcall_cmd(reg_t *reg)
 {
