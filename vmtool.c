@@ -80,7 +80,7 @@ int VMCheckVirtual()
 		/* exception 32 bit Windows process on non-VMware environment		*/
 	}
 
-	if (R_EBX(reg) != VMWARE_MAGIC) {
+	if ((uint32_t)R_EBX(reg) != VMWARE_MAGIC) {
 		/* get version backdoor command failure */
 		if (vmtool_msg > vmtool_quiet) {
 			fprintf(stderr, MSG_NOT_VM);
@@ -175,7 +175,7 @@ int VMCheckVirtual()
 
 	sigaction(SIGSEGV, &oldaction, 0);
 
-	if (R_EBX(reg) != VMWARE_MAGIC) {
+	if ((uint32_t)R_EBX(reg) != VMWARE_MAGIC) {
 		/* get version backdoor command failure */
 		if (vmtool_msg > vmtool_quiet) {
 			fprintf(stderr, MSG_NOT_VM);
